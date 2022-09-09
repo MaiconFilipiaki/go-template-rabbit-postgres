@@ -13,5 +13,5 @@ func main() {
 	db := config.CreateConnection()
 	task.Run(db)
 	s := http.NewServer()
-	s.Run()
+	s.Run(db)
 }

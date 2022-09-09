@@ -3,7 +3,6 @@ package v1
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
-	"golangNetHttp/external/db/config"
 	"golangNetHttp/external/db/models"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
@@ -42,9 +41,8 @@ func createUser(db *gorm.DB) (userNew *models.User) {
 	return
 }
 
-func HandlersV1Http(server *gin.Engine) {
+func HandlersV1Http(server *gin.Engine, db *gorm.DB) {
 	server.GET("/", func(c *gin.Context) {
-		db := config.GetDB()
 		userNew := createUser(db)
 		b, err := json.Marshal(userNew)
 		if err != nil {
@@ -54,27 +52,23 @@ func HandlersV1Http(server *gin.Engine) {
 	})
 
 	server.GET("/languages", func(ctx *gin.Context) {
-		db := config.GetDB()
 		var languages []models.Language
 		db.Preload("Books").Find(&languages)
 		ctx.JSON(200, languages)
 	})
 
 	server.GET("/books", func(ctx *gin.Context) {
-		db := config.GetDB()
 		var books []models.Book
 		db.Preload("Languages").Find(&books)
 		ctx.JSON(200, books)
 	})
 	server.GET("/users", func(ctx *gin.Context) {
-		db := config.GetDB()
 		var users []models.User
 		db.Preload("Books").Preload("Books.Languages").Preload(clause.Associations).Find(&users)
 		ctx.JSON(200, users)
 	})
 
 	server.GET("/drawsql", func(ctx *gin.Context) {
-		db := config.GetDB()
 		var users []models.User
 		db.Raw("select * from users u, books b, book_languages bl , languages l where b.user_refer = u.id and b.id = bl.book_id and bl.language_id = l.id").Scan(&users)
 		ctx.JSON(200, users)

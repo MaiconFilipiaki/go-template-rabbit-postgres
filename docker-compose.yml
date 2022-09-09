@@ -11,3 +11,13 @@ services:
       - '5672:5672'
     # HTTP management UI
       - '15672:15672'
+  db:
+    image: postgres
+    container_name: postgresql
+    tty: true
+    environment:
+      - POSTGRES_DB=test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
+    ports:
+      - '5432:5432'

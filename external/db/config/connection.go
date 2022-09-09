@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
+	"os"
 )
 
 var db *gorm.DB
@@ -30,7 +31,7 @@ func runMigration(db *gorm.DB) {
 }
 
 func CreateConnection() (db *gorm.DB) {
-	dsn := "host=localhost user=postgres password=root dbname=test port=5432 sslmode=disable"
+	dsn := os.Getenv("HOST_DB")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
